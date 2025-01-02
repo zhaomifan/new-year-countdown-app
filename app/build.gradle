@@ -29,6 +29,18 @@ android {
     buildFeatures {
         viewBinding true
     }
+
+    // 其他配置
+    applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            def appName = "NewYearCountdown"
+            def versionName = "V1.0.0"
+            def buildType = variant.buildType.name
+            def date = new Date().format('yyyyMMdd')
+            def newApkName = "${appName}-${versionName}-${buildType}-${date}.apk"
+            outputFileName = newApkName
+        }
+    }
 }
 
 dependencies {
