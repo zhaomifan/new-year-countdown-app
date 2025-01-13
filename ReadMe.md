@@ -1,4 +1,4 @@
-# 元旦倒计时
+# 倒计时App
 <div align="center">
 <img src="https://imgur.com/XvCeAhr.png" height=300>
 </div>
