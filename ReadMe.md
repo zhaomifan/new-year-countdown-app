@@ -1,6 +1,6 @@
 # 元旦倒计时
 <div align="center">
-<img src="https://imgur.com/SOoz27z.png" height=300>
+<img src="https://imgur.com/XvCeAhr.png" height=300>
 </div>
 
 ## 一、项目概述
