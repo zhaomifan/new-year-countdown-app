@@ -34,7 +34,7 @@ android {
     applicationVariants.all { variant ->
         variant.outputs.all { output ->
             def appName = "Countdown"
-            def versionName = "V2.0.0"
+            def versionName = "V2.1.0"
             def buildType = variant.buildType.name
             def date = new Date().format('yyyyMMdd')
             def newApkName = "${appName}-${versionName}-${buildType}-${date}.apk"
