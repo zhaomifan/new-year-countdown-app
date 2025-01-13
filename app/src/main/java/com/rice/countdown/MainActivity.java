@@ -1,5 +1,6 @@
 package com.rice.countdown;
 
+import android.content.SharedPreferences;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.res.Configuration;
@@ -31,13 +32,28 @@ public class MainActivity extends AppCompatActivity {
     private PopupWindow popupWindow;
     private Calendar selectedCalendar;
     private CountDownTimer countDownTimer;
+    private static final String PREFS_NAME = "CountdownPrefs";
+    private static final String KEY_TITLE = "title";
+    private static final String KEY_FINISH_MSG = "finish_msg";
+    private static final String KEY_TARGET_TIME = "target_time";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setAppLanguage("zh");
-        setCountdown(timeToNextYearNewYear(), "距离元旦还有","元旦快乐");
+        
+        // 读取保存的设置
+        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        String savedTitle = prefs.getString(KEY_TITLE, null);
+        String savedFinishMsg = prefs.getString(KEY_FINISH_MSG, null);
+        String savedTargetTime = prefs.getString(KEY_TARGET_TIME, null);
+        
+        if (savedTitle != null && savedTargetTime != null) {
+            LocalDateTime targetTime = LocalDateTime.parse(savedTargetTime, 
+                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+            setCountdown(secondsToTargetTime(targetTime), savedTitle, savedFinishMsg);
+        }
         // 初始化日历对象
         selectedCalendar = Calendar.getInstance();
         selectedCalendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -88,15 +104,6 @@ public class MainActivity extends AppCompatActivity {
         return String.format(Locale.getDefault(), "%02d : %02d : %02d : %02d", days, hours, minutes, secs);
     }
 
-
-    private long timeToNextYearNewYear() {
-        // 获取当前时间
-        LocalDateTime now = LocalDateTime.now();
-        // 获取下一年的元旦时间，先获取当前年份，加 1 得到下一年，然后设置为 1 月 1 日 00:00:00
-        LocalDateTime nextYearNewYear = LocalDateTime.of(now.getYear() + 1, 1, 1, 0, 0, 0);
-        return secondsToTargetTime(nextYearNewYear);
-    }
-
     private long secondsToTargetTime(LocalDateTime targetTime) {
         // 将当前时间和下一年元旦时间转换为同一时区的 ZonedDateTime 对象
         ZonedDateTime zonedNow = ZonedDateTime.of(LocalDateTime.now(), ZoneId.systemDefault());
@@ -138,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
         popupWindow.showAtLocation(popupView, Gravity.CENTER, 0, 0);
 
         // 确认按钮的点击事件
-        confirmButton.setOnClickListener(v -> {
+            confirmButton.setOnClickListener(v -> {
             String title = titleInput.getText().toString();
             String finishMessage = finishMessageInput.getText().toString();
             String time = timeInput.getText().toString();
@@ -152,6 +159,13 @@ public class MainActivity extends AppCompatActivity {
                 // 将字符串解析为 LocalDateTime
                 LocalDateTime targetTime = LocalDateTime.parse(time, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
                 setCountdown(secondsToTargetTime(targetTime), title,finishMessage);
+                
+                // 保存设置
+                SharedPreferences.Editor editor = getSharedPreferences(PREFS_NAME, MODE_PRIVATE).edit();
+                editor.putString(KEY_TITLE, title);
+                editor.putString(KEY_FINISH_MSG, finishMessage);
+                editor.putString(KEY_TARGET_TIME, time);
+                editor.apply();
             } else {
                 showResult("请填写完整信息");
             }
