@@ -45,7 +45,7 @@
     </string>
 
 
-    <string name="app_name">元旦倒计时</string>
+    <string name="app_name">倒计时</string>
     <string name="countdown_title">距离元旦还有</string>
     <string name="time_format">%d天 %d小时 %d分钟 %d秒</string>
 </resources>
